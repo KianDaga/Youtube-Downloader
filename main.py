@@ -100,43 +100,167 @@ def select_folder():
 # --------------------------
 root = tk.Tk()
 root.title("YouTube Video Downloader")
-root.geometry("500x300")
-root.resizable(False, False)
+root.geometry("760x520")
+root.minsize(720, 480)
+root.configure(bg="#0f172a")
 
 # Variables
 folder_path = tk.StringVar()
-mp3_var = tk.BooleanVar()
+mp3_var = tk.BooleanVar(value=True)
 mp4_var = tk.BooleanVar()
 
-# UI Elements
+# Fonts
+title_font = ("Georgia", 24, "bold")
+subtitle_font = ("Georgia", 11, "italic")
+label_font = ("Helvetica", 12)
+label_bold = ("Helvetica", 12, "bold")
+entry_font = ("Helvetica", 12)
+button_font = ("Helvetica", 12, "bold")
 
-# Label for URL
-url_label = tk.Label(root, text="YouTube URL:")
-url_label.pack(pady=(10, 0))
+# Style helpers
+def make_button(parent, text, command, primary=False):
+    bg = "#f97316" if primary else "#1e293b"
+    fg = "#0b1020" if primary else "#cbd5f5"
+    active_bg = "#fb923c" if primary else "#334155"
+    active_fg = "#0b1020" if primary else "#e2e8f0"
+    return tk.Button(
+        parent,
+        text=text,
+        command=command,
+        bg=bg,
+        fg=fg,
+        activebackground=active_bg,
+        activeforeground=active_fg,
+        padx=14,
+        pady=8,
+        relief="flat",
+        font=button_font,
+        cursor="hand2",
+    )
 
-# Input for URL
-url_entry = tk.Entry(root, width=60)
-url_entry.pack(pady=5)
+# Background frame
+bg_frame = tk.Frame(root, bg="#0f172a")
+bg_frame.pack(fill="both", expand=True)
 
-# Checkbox for MP4 download
-mp4_checkbox = tk.Checkbutton(root, text="Download as MP4 (Video + Audio)", variable=mp4_var)
-mp4_checkbox.pack()
+# Header
+header = tk.Frame(bg_frame, bg="#0f172a")
+header.pack(fill="x", padx=28, pady=(24, 10))
 
-# Checkbox for MP3 download
-mp3_checkbox = tk.Checkbutton(root, text="Download as MP3 (Audio Only)", variable=mp3_var)
-mp3_checkbox.pack()
+title_label = tk.Label(
+    header,
+    text="YouTube Downloader",
+    font=title_font,
+    fg="#f8fafc",
+    bg="#0f172a",
+)
+title_label.pack(anchor="w")
 
-# Button to select save folder
-folder_label = tk.Button(root, text="Choose Save Folder", command=select_folder)
-folder_label.pack(pady=(10, 0))
+subtitle_label = tk.Label(
+    header,
+    text="Grab videos or audio with a clean one-click flow",
+    font=subtitle_font,
+    fg="#94a3b8",
+    bg="#0f172a",
+)
+subtitle_label.pack(anchor="w", pady=(2, 0))
 
-# Entry to show a selected folder path
-folder_entry = tk.Entry(root, textvariable=folder_path, width=60)
-folder_entry.pack(pady=5)
+# Card container
+card = tk.Frame(bg_frame, bg="#111827", highlightthickness=1, highlightbackground="#1f2937")
+card.pack(fill="both", expand=True, padx=24, pady=12)
 
-# Button to start download
-download_button = tk.Button(root, text="Download", command=download_video, bg="#4CAF50", fg="white", padx=10, pady=5)
-download_button.pack(pady=(20, 0))
+# URL section
+url_section = tk.Frame(card, bg="#111827")
+url_section.pack(fill="x", padx=24, pady=(22, 6))
+
+url_label = tk.Label(url_section, text="YouTube URL", font=label_bold, fg="#e2e8f0", bg="#111827")
+url_label.pack(anchor="w")
+
+url_entry = tk.Entry(
+    url_section,
+    font=entry_font,
+    width=56,
+    bg="#0b1020",
+    fg="#e2e8f0",
+    insertbackground="#e2e8f0",
+    relief="flat",
+)
+url_entry.pack(fill="x", pady=(8, 0), ipady=6)
+
+# Format section
+format_section = tk.Frame(card, bg="#111827")
+format_section.pack(fill="x", padx=24, pady=(12, 6))
+
+format_label = tk.Label(format_section, text="Format", font=label_bold, fg="#e2e8f0", bg="#111827")
+format_label.pack(anchor="w")
+
+format_row = tk.Frame(format_section, bg="#111827")
+format_row.pack(anchor="w", pady=(8, 0))
+
+mp4_checkbox = tk.Checkbutton(
+    format_row,
+    text="MP4 (Video + Audio)",
+    variable=mp4_var,
+    font=label_font,
+    fg="#e2e8f0",
+    bg="#111827",
+    selectcolor="#0b1020",
+    activebackground="#111827",
+    activeforeground="#e2e8f0",
+)
+mp4_checkbox.pack(side="left", padx=(0, 16))
+
+mp3_checkbox = tk.Checkbutton(
+    format_row,
+    text="MP3 (Audio Only)",
+    variable=mp3_var,
+    font=label_font,
+    fg="#e2e8f0",
+    bg="#111827",
+    selectcolor="#0b1020",
+    activebackground="#111827",
+    activeforeground="#e2e8f0",
+)
+mp3_checkbox.pack(side="left")
+
+# Save location section
+save_section = tk.Frame(card, bg="#111827")
+save_section.pack(fill="x", padx=24, pady=(12, 6))
+
+save_label = tk.Label(save_section, text="Save Location", font=label_bold, fg="#e2e8f0", bg="#111827")
+save_label.pack(anchor="w")
+
+save_row = tk.Frame(save_section, bg="#111827")
+save_row.pack(fill="x", pady=(8, 0))
+
+folder_entry = tk.Entry(
+    save_row,
+    textvariable=folder_path,
+    font=entry_font,
+    bg="#0b1020",
+    fg="#e2e8f0",
+    insertbackground="#e2e8f0",
+    relief="flat",
+)
+folder_entry.pack(side="left", fill="x", expand=True, ipady=6)
+
+folder_button = make_button(save_row, "Choose Folder", select_folder)
+folder_button.pack(side="left", padx=(10, 0))
+
+# Action section
+action_section = tk.Frame(card, bg="#111827")
+action_section.pack(fill="x", padx=24, pady=(20, 24))
+
+download_button = make_button(action_section, "Download Now", download_video, primary=True)
+download_button.pack(side="left")
+
+hint_label = tk.Label(
+    action_section,
+    text="Tip: MP3 downloads audio and auto-converts to .mp3",
+    font=label_font,
+    fg="#94a3b8",
+    bg="#111827",
+)
+hint_label.pack(side="left", padx=(16, 0))
 
 # Start the GUI loop
 root.mainloop()
